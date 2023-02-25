@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Canvas } from "@react-three/fiber";
 import { useGLTF, OrbitControls } from "@react-three/drei";
 import { SketchPicker } from "react-color";
@@ -71,18 +71,18 @@ const Main = () => {
                 receiveShadow
                 castShadow
                 geometry={nodes[key].geometry}
-                onClick={(e) => (
-                  e.stopPropagation(),
+                onClick={(e) => {
+                  e.stopPropagation();
                   setActiveLayer({
                     desc: nodes[key].material.name,
                     name: nodes[key].name,
-                  })
-                )}
+                  });
+                }}
               >
                 <meshStandardMaterial color={colors[key]} />
               </mesh>
             );
-          }
+          } else return "";
         })}
       </group>
     );
@@ -91,6 +91,9 @@ const Main = () => {
   return (
     <div className="MainContainer">
       <div className="ColorPicker">
+        <h1 style={{ textTransform: "capitalize", marginBottom: "60px" }}>
+          {activeLayer.desc}
+        </h1>
         <select
           value={activeLayer.desc}
           onChange={(e) => setActiveLayer(handleActiveLayer(e.target.value))}
@@ -99,9 +102,6 @@ const Main = () => {
             return <option key={option}>{option}</option>;
           })}
         </select>
-        <h1 style={{ textTransform: "capitalize", marginBottom: "60px" }}>
-          {activeLayer.desc}
-        </h1>
         <SketchPicker
           disableAlpha
           color={colors[activeLayer.name]}
