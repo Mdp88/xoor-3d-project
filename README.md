@@ -2,7 +2,7 @@ Welcome!
 
 Please install all dependencies with yarn install to run the project locally
 
-The model with start with random colors every time the app is loaded.
+The model will start with random colors every time the app is loaded.
 
 Click on the model or choose from the different layers on the dropdown to change the color or scale them.
 
