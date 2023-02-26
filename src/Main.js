@@ -5,7 +5,7 @@ import { SketchPicker } from "react-color";
 import "./Main.css";
 
 const Main = () => {
-  const [colors, setColors] = useState({});
+  const [colorsAndScale, setColorsAndScale] = useState({});
   const [activeLayer, setActiveLayer] = useState({});
   const [options, setOptions] = useState([]);
 
@@ -24,10 +24,10 @@ const Main = () => {
 
     Object.keys(nodes).forEach((key) => {
       if (nodes[key].type === "Mesh") {
-        temp[key] = randomColor();
+        temp[key] = { color: randomColor(), scale: 1 };
       }
     });
-    setColors(temp);
+    setColorsAndScale(temp);
 
     Object.keys(nodes).forEach((key) => {
       if (nodes[key].type === "Mesh") {
@@ -48,18 +48,15 @@ const Main = () => {
     return temp;
   };
 
-  const handleColor = (color) => {
-    let temp = JSON.parse(JSON.stringify(colors));
-    temp[activeLayer.name] = color.hex;
+  const handleColorAndScale = (value, attribute) => {
+    let temp = JSON.parse(JSON.stringify(colorsAndScale));
+    temp[activeLayer.name][attribute] = value;
 
-    setColors(temp);
+    setColorsAndScale(temp);
   };
 
   function Model() {
-    console.log(nodes);
-    console.log(activeLayer);
-
-    console.log(colors);
+    console.log(colorsAndScale);
 
     return (
       <group>
@@ -68,8 +65,7 @@ const Main = () => {
             return (
               <mesh
                 key={nodes[key].uuid}
-                receiveShadow
-                castShadow
+                scale={colorsAndScale[key].scale}
                 geometry={nodes[key].geometry}
                 onClick={(e) => {
                   e.stopPropagation();
@@ -79,7 +75,7 @@ const Main = () => {
                   });
                 }}
               >
-                <meshStandardMaterial color={colors[key]} />
+                <meshStandardMaterial color={colorsAndScale[key].color} />
               </mesh>
             );
           } else return "";
@@ -91,9 +87,7 @@ const Main = () => {
   return (
     <div className="MainContainer">
       <div className="ColorPicker">
-        <h1 style={{ textTransform: "capitalize", marginBottom: "60px" }}>
-          {activeLayer.desc}
-        </h1>
+        <span className="Title">{activeLayer.desc}</span>
         <select
           value={activeLayer.desc}
           onChange={(e) => setActiveLayer(handleActiveLayer(e.target.value))}
@@ -104,8 +98,24 @@ const Main = () => {
         </select>
         <SketchPicker
           disableAlpha
-          color={colors[activeLayer.name]}
-          onChange={(color) => handleColor(color)}
+          color={
+            colorsAndScale[activeLayer.name] &&
+            colorsAndScale[activeLayer.name].color
+          }
+          onChange={(color) => handleColorAndScale(color.hex, "color")}
+        />
+        <span className="Title">Resize</span>
+        <input
+          type="range"
+          min={0.5}
+          max={2}
+          value={
+            colorsAndScale[activeLayer.name]
+              ? colorsAndScale[activeLayer.name].scale
+              : 1
+          }
+          onChange={(e) => handleColorAndScale(e.target.value, "scale")}
+          step={0.1}
         />
       </div>
       <div className="CanvasContainer">
