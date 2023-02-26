@@ -56,8 +56,6 @@ const Main = () => {
   };
 
   function Model() {
-    console.log(colorsAndScale);
-
     return (
       <group>
         {Object.keys(nodes).map((key) => {
